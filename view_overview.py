@@ -122,7 +122,7 @@ def OverviewView(page: ft.Page):
         page.update()
 
     # -------------------------------------------------
-    #   BOTÓN DETAILS + MAIN TOGGLE BUTTON
+    #   BUTTON ROW
     # -------------------------------------------------
     def button_row(details_handler, button):
         return ft.Row(
@@ -231,10 +231,55 @@ def OverviewView(page: ft.Page):
     )
 
     # -------------------------------------------------
+    #   ALL OFF FUNCTION
+    # -------------------------------------------------
+    def all_off(e):
+        # Cambiar estados globales
+        state["light_on"] = False
+        state["door_locked"] = True
+        state["thermostat"] = 22
+        state["fan"] = 0
+
+        # Actualizar textos de estado
+        living_light_status.value = "Status: OFF"
+        light_button.text = "Turn ON"
+
+        front_door_status.value = "Door: LOCKED"
+        door_button.text = "Unlock"
+
+        thermostat_value.value = "Set point: 22 °C"
+        fan_value.value = "Fan speed: 0"
+
+        # Actualizar sliders
+        thermostat_slider.value = 22
+        fan_slider.value = 0
+
+        # Publicar evento en logs
+        publish({
+            "time": time.strftime("%H:%M:%S"),
+            "device": "system",
+            "action": "ALL DEVICES RESET",
+            "user": "User"
+        })
+
+        page.update()
+
+    # Botón rojo
+    all_off_button = ft.ElevatedButton(
+        "ALL OFF",
+        bgcolor=ft.Colors.RED,
+        color=ft.Colors.WHITE,
+        on_click=all_off
+    )
+
+    # -------------------------------------------------
     #   FINAL LAYOUT
     # -------------------------------------------------
     return ft.Column(
         [
+            all_off_button,
+            ft.Divider(),
+
             ft.Text("On/Off devices", size=22, weight="bold"),
             ft.Row([light_card, door_card], wrap=True),
 
